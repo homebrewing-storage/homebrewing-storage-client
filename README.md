@@ -7,7 +7,7 @@ Link: [homebrewing-storage](https://github.com/5david5/homebrewing-storage)
 ## Uruchomienie aplikacji w środowisku deweloperskim
 **1. Pobranie projektu z repozytorium**
 ```
-git clone -b master https://github.com/5david5/homebrewing-storage-client.git
+git clone -b master https://github.com/homebrewing-storage/homebrewing-storage-client.git
 ```
 ```
 cd homebrewing-storage-client
