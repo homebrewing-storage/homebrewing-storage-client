@@ -10,11 +10,11 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import { NavLink, Route } from 'react-router-dom';
-import IngredientListPage from './pages/ingredientListPage';
-import IngredientFormPage from './pages/ingredientFormPage';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import PersonIcon from '@material-ui/icons/Person';
+import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
+import DescriptionIcon from '@material-ui/icons/Description';
+import BottomNavigation from './BottomNavigation';
 
 
 const drawerWidth = 240;
@@ -66,44 +66,37 @@ export default function PermanentDrawerLeft() {
         <div className={classes.toolbar} />
         <Divider />
         <List>
-          {['Ingredients', 'Notifications', 'User', 'Logs'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
+          
+            <ListItem button key="Ingredients">
+              <ListItemIcon><LocalPharmacyIcon /></ListItemIcon>
+              <ListItemText primary="Ingredients" />
             </ListItem>
-          ))}
+
+            <ListItem button key="Notifcations">
+              <ListItemIcon><NotificationsIcon /></ListItemIcon>
+              <ListItemText primary="Notifcations" />
+            </ListItem>
+
+            <ListItem button key="User">
+              <ListItemIcon><PersonIcon /></ListItemIcon>
+              <ListItemText primary="User" />
+            </ListItem>
+
+            <ListItem button key="Logs">
+              <ListItemIcon><DescriptionIcon /></ListItemIcon>
+              <ListItemText primary="Logs" />
+            </ListItem>
+
+            
+          
         </List>
         <Divider />
-        <List>
-          {[].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography paragraph>
-        <div className="ui two item menu">
-            <NavLink className="item" activeClassName="active" exact to="/">
-            Ingredients List
-            </NavLink>
-            <NavLink
-            className="item"
-            activeClassName="active"
-            exact
-            to="/ingredients/new"
-            >
-            Add Ingredient
-            </NavLink>
-        </div>
-        <Route exact path="/" component={IngredientListPage} />
-        <Route path="/ingredients/new" component={IngredientFormPage} />
-        <Route path="/ingredients/edit/:_id" component={IngredientFormPage} />
-        </Typography>
-
+          <BottomNavigation></BottomNavigation>
+          </Typography>
       </main>
     </div>
   );
