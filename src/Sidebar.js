@@ -15,6 +15,11 @@ import PersonIcon from '@material-ui/icons/Person';
 import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
 import DescriptionIcon from '@material-ui/icons/Description';
 import BottomNavigation from './BottomNavigation';
+import LogsPage from './pages/logsPage';
+import UserPage from './pages/userPage';
+import NotificationsPage from './pages/notificationsPage';
+import { NavLink, Route } from 'react-router-dom';
+
 
 
 const drawerWidth = 240;
@@ -67,22 +72,22 @@ export default function PermanentDrawerLeft() {
         <Divider />
         <List>
           
-            <ListItem button key="Ingredients">
+            <ListItem button key="Ingredients" component={NavLink} to="/ingredients">
               <ListItemIcon><LocalPharmacyIcon /></ListItemIcon>
               <ListItemText primary="Ingredients" />
             </ListItem>
 
-            <ListItem button key="Notifcations">
+            <ListItem button key="Notifcations" component={NavLink} to="/notifications">
               <ListItemIcon><NotificationsIcon /></ListItemIcon>
               <ListItemText primary="Notifcations" />
             </ListItem>
 
-            <ListItem button key="User">
+            <ListItem button key="User" component={NavLink} to="/user">
               <ListItemIcon><PersonIcon /></ListItemIcon>
               <ListItemText primary="User" />
             </ListItem>
 
-            <ListItem button key="Logs">
+            <ListItem button key="Logs" component={NavLink} to="/logs">
               <ListItemIcon><DescriptionIcon /></ListItemIcon>
               <ListItemText primary="Logs" />
             </ListItem>
@@ -94,10 +99,23 @@ export default function PermanentDrawerLeft() {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Typography paragraph>
-          <BottomNavigation></BottomNavigation>
-          </Typography>
+
+        
+          <Route path="/ingredients">
+            <BottomNavigation /> 
+          </Route>
+          <Route path="/notifications">
+            <NotificationsPage />
+          </Route>
+          <Route path="/user">
+            <UserPage />
+          </Route>
+          <Route path="/logs">
+            <LogsPage />
+          </Route>
+        
       </main>
+      
     </div>
   );
 }

@@ -29,11 +29,11 @@ export default function SimpleBottomNavigation() {
         className={classes.root}
         >
 
-            <BottomNavigationAction label="Ingredients List" icon={<ListIcon />} component={NavLink} to="/" />
+            <BottomNavigationAction label="Ingredients List" icon={<ListIcon />} component={NavLink} to="/ingredients" />
             <BottomNavigationAction label="Add Ingredient" icon={<AddIcon />} component={NavLink} to="/ingredients/new" />
 
         </BottomNavigation>
-    <Route exact path="/" component={IngredientListPage} />
+    <Route exact path="/ingredients" component={IngredientListPage} />
     <Route path="/ingredients/new" component={IngredientFormPage} />
     <Route path="/ingredients/edit/:_id" component={IngredientFormPage} />
     </div>
