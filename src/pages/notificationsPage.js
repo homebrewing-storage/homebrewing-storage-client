@@ -1,6 +1,6 @@
 import React from 'react'
 
-function notificationsPage() {
+const notificationsPage = () => {
     return (
         <div>
             <h1>Notifications Page</h1>

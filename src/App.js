@@ -1,13 +1,13 @@
 import React from 'react';
-import Sidebar from './Sidebar';
-
+import ContextState from './contextStateConfig';
 
 const App = () => {
+
   return (
     <div>
-      <Sidebar />
+      <ContextState />
     </div>
-  );
+  )
 }
 
 export default App;

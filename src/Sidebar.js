@@ -1,24 +1,16 @@
-import React from 'react';
+import React, { useContext, useEffect, useReducer, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import PersonIcon from '@material-ui/icons/Person';
-import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
-import DescriptionIcon from '@material-ui/icons/Description';
-import BottomNavigation from './BottomNavigation';
-import LogsPage from './pages/logsPage';
-import UserPage from './pages/userPage';
-import NotificationsPage from './pages/notificationsPage';
-import { NavLink, Route } from 'react-router-dom';
+import Dropdown from './components/dropdown';
+import Menu from './components/menu';
+import { Router, Route, Switch, Redirect } from 'react-router-dom';
+import Context from './utils/context';
+
 
 
 
@@ -43,79 +35,63 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
   },
+  nested: {
+    paddingLeft: theme.spacing(4),
+  },
+  dropdown: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  header: {
+    padding: theme.spacing(2),
+  }
 }));
 
-export default function PermanentDrawerLeft() {
+const PrivateRoute = ({component: Component, auth }) => (
+  <Route render={props => auth === true
+    ? <Component auth={auth} {...props} />
+    : <Redirect to={{pathname:'/'}} />
+  }
+  />
+)
+
+const PermanentDrawerLeft = () => {
   const classes = useStyles();
+  const context = useContext(Context);
 
   return (
     <div className={classes.root}>
+      
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <Typography variant="h6" noWrap>
-            Homebrewing storage
-          </Typography>
+        <Toolbar className={classes.dropdown}>
+            <Dropdown/>
         </Toolbar>
       </AppBar>
       <Drawer
         className={classes.drawer}
-        variant="permanent"
+        variant="permanent" 
         classes={{
           paper: classes.drawerPaper,
         }}
         anchor="left"
       >
-        <div className={classes.toolbar} />
+        
+        <Typography variant="h6" noWrap className={classes.header}>
+            Homebrewing storage
+          </Typography>
         <Divider />
-        <List>
-          
-            <ListItem button key="Ingredients" component={NavLink} to="/ingredients">
-              <ListItemIcon><LocalPharmacyIcon /></ListItemIcon>
-              <ListItemText primary="Ingredients" />
-            </ListItem>
+          <Menu />
 
-            <ListItem button key="Notifcations" component={NavLink} to="/notifications">
-              <ListItemIcon><NotificationsIcon /></ListItemIcon>
-              <ListItemText primary="Notifcations" />
-            </ListItem>
-
-            <ListItem button key="User" component={NavLink} to="/user">
-              <ListItemIcon><PersonIcon /></ListItemIcon>
-              <ListItemText primary="User" />
-            </ListItem>
-
-            <ListItem button key="Logs" component={NavLink} to="/logs">
-              <ListItemIcon><DescriptionIcon /></ListItemIcon>
-              <ListItemText primary="Logs" />
-            </ListItem>
-
-            
-          
-        </List>
         <Divider />
       </Drawer>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-
-        
-          <Route path="/ingredients">
-            <BottomNavigation /> 
-          </Route>
-          <Route path="/notifications">
-            <NotificationsPage />
-          </Route>
-          <Route path="/user">
-            <UserPage />
-          </Route>
-          <Route path="/logs">
-            <LogsPage />
-          </Route>
-        
-      </main>
+            
       
     </div>
   );
 }
+
+
+export default PermanentDrawerLeft;

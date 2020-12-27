@@ -1,6 +1,6 @@
 import React from 'react'
 
-function logsPage() {
+const logsPage = () => {
     return (
         <div>
             <h1>Logs Page</h1>

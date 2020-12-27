@@ -4,15 +4,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { IngredientContextProvider } from './context/ingredientContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <IngredientContextProvider>
-      <BrowserRouter >
-        <App />
+    <BrowserRouter>
+      <App />
       </BrowserRouter>
-    </IngredientContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -1,6 +1,6 @@
 import React from 'react'
 
-function userPage() {
+const userPage = () => {
     return (
         <div>
             <h1>User Page</h1>
