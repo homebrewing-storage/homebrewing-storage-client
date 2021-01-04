@@ -1,8 +1,10 @@
 import * as ACTION_TYPES from '../actions/action_types'
 
+let user = JSON.parse(localStorage.getItem('user'));
 export const initialState = {
   is_authenticated: false,
-  profile: null
+  profile: null,
+  user: user ? user : false,
 }
 
 export const AuthReducer = (state = initialState, action) => {
@@ -13,6 +15,11 @@ export const AuthReducer = (state = initialState, action) => {
           is_authenticated: true,
         }
       case ACTION_TYPES.LOGIN_FAILURE:
+        return {
+          ...state,
+          is_authenticated: false,
+        }
+        case ACTION_TYPES.REGISTER_SUCCESS:
         return {
           ...state,
           is_authenticated: false,

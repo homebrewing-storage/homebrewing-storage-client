@@ -8,15 +8,14 @@ export const FAILURE = {
   type: ACTION_TYPES.FAILURE
 }
 
-export const success = () => {
+export const message = (err) => {
   return {
-    type: ACTION_TYPES.SUCCESS
-  }
-}
-
-export const failure = () => {
-  return {
-    type: ACTION_TYPES.FAILURE
+    type: ACTION_TYPES.MESSAGE,
+    payload: {
+      type: 'error',
+      title: err.title,
+      content: err.message
+    }
   }
 }
 
@@ -29,6 +28,12 @@ export const login_success = () => {
 export const login_failure = () => {
   return {
     type: ACTION_TYPES.LOGIN_FAILURE
+  }
+}
+
+export const register_success = () => {
+  return {
+    type: ACTION_TYPES.REGISTER_SUCCESS,
   }
 }
 

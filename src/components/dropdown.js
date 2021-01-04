@@ -31,23 +31,18 @@ export default function FadeMenu(props) {
   useEffect(() => {
     if(context.authObj.getCurrentToken()){
       setAuth(true)
-      context.authObj.getUserBoard().then(user => {
-        if(user){
-          setUserState(user.data.name);
-        }
-      })
     }   
-  })
+  },)
 
   let authorized;
   if(!auth){
     authorized = <div>
-      <MenuItem onClick={handleClose} component={Link} to={'/login'}>Login</MenuItem>
-      <MenuItem onClick={handleClose} component={Link} to={'/register'}>Register</MenuItem>
-      </div>
+                <MenuItem onClick={handleClose} component={Link} to={'/login'}>Login</MenuItem>
+                <MenuItem onClick={handleClose} component={Link} to={'/register'}>Register</MenuItem>
+                </div>
   } else {
     authorized = <div>
-                  <MenuItem onClick={handleClose} component={Link} to={'/profile'}>{userState}</MenuItem>
+                  <MenuItem onClick={handleClose} component={Link} to={'/profile'}>{context.userState.name}</MenuItem>
                   <MenuItem onClick={onClick} >Logout</MenuItem>
                   </div> 
   }

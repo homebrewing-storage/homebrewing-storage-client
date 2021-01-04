@@ -6,32 +6,34 @@ import IngredientForm from '../components/ingredientForm';
 import * as ACTIONS from '../store/actions/actions';
 import * as IngredientReducer from '../store/reducers/ingredients_reducer';
 import Context from '../utils/context';
+import * as MessageReducer from '../store/reducers/message_reducer';
 
 const FermentablesPage = () => {
     const context = useContext(Context)
-    const [state, dispatch] = useReducer(IngredientReducer.IngredientReducer, IngredientReducer.initialState);
+    const [stateIngredient, dispatchIngredient] = useReducer(IngredientReducer.IngredientReducer, IngredientReducer.initialState);
+    const [stateMessage, dispatchMessage] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState);
     const fermentables = 'fermentables';
     
     useEffect(() => {
       const fetchData = async () => {
         try{
-        const response = await axios.get(`http://localhost/api/fermentables`);
-        dispatch(ACTIONS.fetch_ingredients(response.data.data || response.data));
+        const response = await axios.get(`http://localhost/api/fermentables`, { headers: context.authObj.authHeader() });
+        dispatchIngredient(ACTIONS.fetch_ingredients(response.data.data || response.data));
       } catch (error) {
-        flashErrorMessage(dispatch, error);
+        flashErrorMessage(dispatchMessage, error);
         }    
       };
         fetchData();
         
-      }, [dispatch]);
+      }, [dispatchIngredient]);
 
 
     return (
         <div>
             <h1>List of Fermentables</h1>
             
-            <IngredientList ingredients={state.ingredients} name={fermentables}/>
-            
+            <IngredientList ingredients={stateIngredient.ingredients} name={fermentables}/>
+            {stateMessage.message.content && <FlashMessage message={stateMessage.message} />}
         </div>
     )
 }

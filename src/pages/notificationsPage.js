@@ -1,6 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import axios from 'axios';
 
-const notificationsPage = () => {
+const NotificationsPage = () => {
+
+    useEffect(() => {
+        axios.get('http://localhost/api/notifications')
+        .then(res => console.log(res))
+        
+    }, [])
+
     return (
         <div>
             <h1>Notifications Page</h1>
@@ -8,4 +16,4 @@ const notificationsPage = () => {
     )
 }
 
-export default notificationsPage
+export default NotificationsPage

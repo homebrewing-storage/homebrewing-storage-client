@@ -17,7 +17,7 @@ export const FlashMessage = ({message}) => {
 export const flashErrorMessage = (dispatch, error) => {
     const err = error.response ? error.response.data : error;
     dispatch({
-        type: 'FLASH_MESSAGE',
+        type: 'MESSAGE',
         payload: {
             type: 'error',
             title: err.name,

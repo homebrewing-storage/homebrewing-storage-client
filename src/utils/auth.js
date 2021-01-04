@@ -6,30 +6,52 @@ import * as ACTIONS from '../store/actions/actions';
 const API_URL = "http://localhost/api/";
 
 
+
 export default class Auth {
 
   userProfile = {};
   
+  
+  
   login = (data) => {
     
-    console.log(data);
+    
+    
     axios.defaults.withCredentials = true;
+    const request = () => axios.get('http://localhost/sanctum/csrf-cookie');
 
-    return axios.get('http://localhost/sanctum/csrf-cookie')
-    .then(res => {
-      axios.post(API_URL + "login", { email: data.email, password: data.password})
-      .then((response) => {
-        if (response.data.token) {
-          localStorage.setItem("token", JSON.stringify(response.data.token));
-          setTimeout(() => { history.replace('/authcheck') }, 600);
-          setTimeout(() => { window.location.reload() }, 1200);
-        }
-        return response.data.token;
-      });
-      
-    }).catch(err => console.log(err))
+    try{
+      return request.then(axios.post(API_URL + "login", { email: data.email, password: data.password})
+        .then((response) => {
+          if (response.data.token) {
+            localStorage.setItem("token", JSON.stringify(response.data.token));
+            this.getUserBoard().then(() => {
+              setTimeout(() => { history.replace('/authcheck') }, 800)
+              setTimeout(() => { window.location.reload() }, 1200)
+            });
+          }
+          return response
+        })   
+      )
+  } catch (err) {
+    return err
+}
+    
     
   };
+
+  register = (data) => {
+    axios.defaults.withCredentials = true;
+    try {
+      axios.get('http://localhost/sanctum/csrf-cookie').then(
+        axios.post(API_URL + "register", data).then(res => {
+          return res
+        })
+      )
+    } catch(err) {
+      return err
+    }
+  }
 
   getCurrentToken = () => {
     if(localStorage.getItem("token")) {
@@ -53,13 +75,14 @@ export default class Auth {
   getUserBoard() {
     return axios.get(API_URL + "user", { headers: this.authHeader() })
     .then(response => {
-      return response
+      localStorage.setItem("user", JSON.stringify(response.data))
     })
     
   }
 
   logout = () => {
-    localStorage.removeItem('token')
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setTimeout(() => { history.replace('/authcheck') }, 600);
     setTimeout(() => { window.location.reload() }, 1200);
     

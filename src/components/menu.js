@@ -6,7 +6,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import PersonIcon from '@material-ui/icons/Person';
 import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
 import DescriptionIcon from '@material-ui/icons/Description';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -53,7 +53,7 @@ const Menu = () => {
           {['Yeasts','Hops','Fermentables','Extras'].map((item, index) => {
             return (
               <List>
-              <ListItem button className={classes.nested} component={Link} key={item} to={`/ingredients/${item.toLowerCase()}`}>
+              <ListItem button className={classes.nested} component={NavLink} key={item} to={`/ingredients/${item.toLowerCase()}`}>
                 <ListItemText primary={item} />
               </ListItem>
               </List>
@@ -62,17 +62,17 @@ const Menu = () => {
           )}
           </Collapse>
 
-          <ListItem button key="Notifcations" component={Link} to="/notifications">
+          <ListItem button key="Notifcations" component={NavLink} to="/notifications">
             <ListItemIcon><NotificationsIcon /></ListItemIcon>
             <ListItemText primary="Notifcations" />
           </ListItem>
 
-          <ListItem button key="User" component={Link} to="/user">
+          <ListItem button key="User" component={NavLink} to="/user">
             <ListItemIcon><PersonIcon /></ListItemIcon>
             <ListItemText primary="User" />
           </ListItem>
 
-          <ListItem button key="Logs" component={Link} to="/logs">
+          <ListItem button key="Logs" component={NavLink} to="/logs">
             <ListItemIcon><DescriptionIcon /></ListItemIcon>
             <ListItemText primary="Logs" />
           </ListItem>

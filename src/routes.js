@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import history from './utils/history';
 import Context from './utils/context';
@@ -26,6 +26,14 @@ const PrivateRoute = ({component: Component, auth }) => (
   />
 )
 
+const AuthorizedRoute = ({component: Component, auth }) => (
+  <Route render={props => auth === true
+    ? <Redirect to={{pathname:'/'}} />
+    : <Component auth={auth} {...props} />
+  }
+  />
+)
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -40,9 +48,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Routes = () => {
-    const context = useContext(Context)
+    const context = useContext(Context);
     const classes = useStyles();
+    const [auth, setAuthState] = useState(false);
 
+    useEffect(() => {
+      if(!context.authObj.getCurrentToken()){
+        
+      } else {
+        setAuthState(true);
+      }
+    },)  
 
       return(
           <div>
@@ -50,20 +66,22 @@ const Routes = () => {
                 <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <Switch>
-                  <Route exact path="/" />
-                  <Route exact path='/login' component={LoginPage}></Route>
-                  <Route exact path='/register' component={RegisterPage}></Route>
-                  <Route exact path="/notifications" component={NotificationsPage}></Route>
-                  <Route exact path="/user" component={UserPage}></Route>
-                  <Route path="/logs" component={LogsPage}></Route>
-                  <Route path="/ingredients/yeasts" component={YeastsPage}></Route>
-                  <Route path="/ingredients/hops" component={HopsPage}></Route>
-                  <Route path="/ingredients/fermentables" component={FermentablesPage}></Route>
-                  <Route path="/ingredients/extras" component={ExtrasPage}></Route>
-                  <Route path='/authcheck' component={AuthCheck} />
-                  <PrivateRoute path="/profile"
-                            auth={context.authState}
-                            component={Profile} />
+                  <AuthorizedRoute path="/login"
+                            auth={auth}
+                            component={LoginPage} />
+                  <AuthorizedRoute path="/register"
+                            auth={auth}
+                            component={RegisterPage} />
+                  <Route  path="/notifications" component={NotificationsPage}></Route>
+                  <Route  path="/user" component={UserPage}></Route>
+                  <Route  path="/logs" component={LogsPage}></Route>
+                  <Route  path="/ingredients/yeasts" component={YeastsPage}></Route>
+                  <Route  path="/ingredients/hops" component={HopsPage}></Route>
+                  <Route  path="/ingredients/fermentables" component={FermentablesPage}></Route>
+                  <Route  path="/ingredients/extras" component={ExtrasPage}></Route>
+                  <Route  path='/authcheck' component={AuthCheck} />
+                  <PrivateRoute path="/profile" auth={context.authObj.getCurrentToken() ? true : false} component={Profile} />
+                  
                 </Switch>
                 </main>
             </div>

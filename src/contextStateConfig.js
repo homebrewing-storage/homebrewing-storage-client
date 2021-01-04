@@ -5,6 +5,7 @@ import * as ACTIONS from './store/actions/actions';
 
 import * as AuthReducer from './store/reducers/auth_reducer';
 import * as IngredientReducer from './store/reducers/ingredients_reducer';
+import * as MessageReducer from './store/reducers/message_reducer';
 import Routes from './routes';
 
 import Auth from './utils/auth';
@@ -16,12 +17,20 @@ const auth = new Auth()
 const ContextState = () => {
 
 
+    const [stateMessageReducer, dispatchMessageReducer] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState)
+
+    const handleMessage = () => {
+      dispatchMessageReducer(ACTIONS.message())
+    }
+
+
+
+
     const [stateIngredientReducer, dispatchIngredientReducer] = useReducer(IngredientReducer.IngredientReducer, IngredientReducer.initialState)
 
     const handleFetch = () => {
       dispatchIngredientReducer(ACTIONS.fetch_ingredients())
     }
-
 
 
 
@@ -44,9 +53,9 @@ const ContextState = () => {
       dispatchAuthReducer(ACTIONS.remove_profile())
     }
 
-
-
-
+    const handleRegister = () => {
+      dispatchAuthReducer(ACTIONS.register_success())
+    }
 
 
     return(
@@ -59,10 +68,15 @@ const ContextState = () => {
 
             authState: stateAuthReducer.is_authenticated,
             profileState:  stateAuthReducer.profile,
+            userState: stateAuthReducer.user,
             handleUserLogin: () => handleLogin(),
             handleUserLogout: () => handleLogout(),
+            handleUserRegister: () => handleRegister(),
             handleUserAddProfile: (profile) => handleAddProfile(profile),
             handleUserRemoveProfile: () => handleRemoveProfile(),
+
+            messageState: stateMessageReducer.message,
+            handleUserMessage: () => handleMessage(),
 
             authObj: auth
           }}>

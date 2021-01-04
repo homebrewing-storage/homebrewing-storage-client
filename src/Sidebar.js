@@ -49,17 +49,19 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const PrivateRoute = ({component: Component, auth }) => (
-  <Route render={props => auth === true
-    ? <Component auth={auth} {...props} />
-    : <Redirect to={{pathname:'/'}} />
-  }
-  />
-)
+
 
 const PermanentDrawerLeft = () => {
   const classes = useStyles();
   const context = useContext(Context);
+  const [auth, setAuthState] = useState(null);
+
+  useEffect(() => {
+    if(context.authObj.getCurrentToken()) {
+      setAuthState(true);
+    } 
+  }, [])
+
 
   return (
     <div className={classes.root}>
@@ -67,7 +69,7 @@ const PermanentDrawerLeft = () => {
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar className={classes.dropdown}>
-            <Dropdown/>
+            <Dropdown />
         </Toolbar>
       </AppBar>
       <Drawer
@@ -81,7 +83,7 @@ const PermanentDrawerLeft = () => {
         
         <Typography variant="h6" noWrap className={classes.header}>
             Homebrewing storage
-          </Typography>
+        </Typography>
         <Divider />
           <Menu />
 
