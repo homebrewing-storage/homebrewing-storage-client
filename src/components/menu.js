@@ -32,7 +32,7 @@ const Menu = () => {
     };
 
     useEffect(() => {
-      if(context.authObj.getCurrentToken()) {
+      if(context.authObj.getCurrentToken() && context.authObj.getUser()) {
         setAuth(true);
       } 
     })

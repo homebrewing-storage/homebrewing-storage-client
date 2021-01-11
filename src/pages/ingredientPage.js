@@ -1,36 +1,45 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useReducer } from 'react'
 import axios from 'axios';
-import { flashErrorMessage } from '../components/flashMessage';
-import { IngredientContext } from '../context/ingredientContext';
 import { useParams } from "react-router-dom";
+import IngredientCard from '../components/ingredientCard';
+import Context from '../utils/context';
+import * as MessageReducer from '../store/reducers/message_reducer';
+import { FlashMessage, flashErrorMessage } from '../components/flashMessage';
 
 const IngredientPage = () => {
-    const [state, dispatch] = useContext(IngredientContext);
+    const context = useContext(Context);
     const [loading, setLoading] = useState(true);
-    const id = useParams()._id;
+    const id = useParams().id;
     const name = useParams().name;
-
+    const [stateMessage, dispatchMessage] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState);
+    
     useEffect(() => {
-           
+        
+        
         if (id) {
             const fetchData = async () => {
                 try{
-                    const response = await axios.get(`http://localhost/api/${name}/${id}`);
-                    dispatch({
-                        type: 'FETCH_INGREDIENT',
-                        payload: response.data,
-                    });
-                    setLoading(false);
-                    console.log(response)
+                    await axios.get(`http://localhost/api/${name}/${id}`, { headers: context.authObj.authHeader() })
+                    .then(res => {
+                        context.handleFetchIngredient(res.data || res.data.data)
+                        
+                        setLoading(false);
+                        console.log(res)
+                    }) 
+
                 } catch(error) {
-                    flashErrorMessage(dispatch, error);
+                    flashErrorMessage(dispatchMessage, error);
                 }
             }
             fetchData();
+            
         } else {
             setLoading(false)
         }
-    }, [dispatch]);
+        
+    }, []);
+    console.log(context.ingredientState)
+    
 
     if (loading) {
         return <p>Please wait...</p>
@@ -39,7 +48,8 @@ const IngredientPage = () => {
     return (
         <div>
             <h1>Ingredient page</h1>
-            
+            <IngredientCard ingredient={context.ingredientState}/>
+            {stateMessage.message.content && <FlashMessage message={stateMessage.message} />}
         </div>
     )
 }

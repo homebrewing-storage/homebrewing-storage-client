@@ -5,6 +5,7 @@ export const initialState = {
   is_authenticated: false,
   profile: null,
   user: user ? user : false,
+  message: {}
 }
 
 export const AuthReducer = (state = initialState, action) => {
@@ -23,6 +24,11 @@ export const AuthReducer = (state = initialState, action) => {
         return {
           ...state,
           is_authenticated: false,
+          message: {
+            type: 'success',
+            title: 'Success',
+            content: 'Verify your email',
+        },
         }
         case ACTION_TYPES.ADD_PROFILE:
         return {

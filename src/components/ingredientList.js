@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useReducer, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,10 +11,12 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { NavLink, Route } from 'react-router-dom';
-import { flashErrorMessage }  from  './flashMessage';
-import { IngredientContext }  from  '../context/ingredientContext';
+import { flashErrorMessage, flashSuccessMessage, FlashMessage }  from  './flashMessage';
 import axios  from  'axios';
-import IngredientPage from '../pages/ingredientPage';
+import * as ACTIONS from '../store/actions/actions';
+import * as IngredientReducer from '../store/reducers/ingredients_reducer';
+import * as MessageReducer from '../store/reducers/message_reducer';
+import Context from '../utils/context';
 
 const useStyles = makeStyles({
     table: {
@@ -24,28 +26,27 @@ const useStyles = makeStyles({
 
 const IngredientList = ({ ingredients, name }) => {
     const classes = useStyles();
-    /*const [state, dispatch] = useContext(IngredientContext);
+    const context = useContext(Context);
+    const [stateIngredient, dispatchIngredient] = useReducer(IngredientReducer.IngredientReducer, IngredientReducer.initialState);
+    const [stateMessage, dispatchMessage] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState);
+
 
     const deleteContact = async id => {
         try {
-          const response = await axios.delete(
-            `http://localhost/api/${name}/${id}`,
-          );
-          dispatch({
-            type: 'DELETE_INGREDIENT',
-            payload: response.data,
-          });
+          const response = await axios.delete(`http://localhost/api/${name}/${id}`, { headers: context.authObj.authHeader() });
+          console.log(response)
+          dispatchIngredient(ACTIONS.delete_ingredient(response.data.data || response.data));
+          
         } catch (error) {
-          flashErrorMessage(dispatch, error);
+          flashErrorMessage(dispatchMessage, error)
         }
       };
-    */
+    
     const list = () => {
-      
+        
         return ingredients.map(ingredient => {
             return (
               <TableRow key={ingredient.id}>
-              <TableCell>{ingredient.id}</TableCell>
                 <TableCell component="th" scope="row">{ingredient.name}</TableCell>
                 <TableCell align="right">{ingredient.type}</TableCell>
                 <TableCell align="right">{ingredient.amount}</TableCell>
@@ -55,7 +56,7 @@ const IngredientList = ({ ingredients, name }) => {
                 <IconButton aria-label="edit" component={NavLink} to={`/ingredients/${name}/${ingredient.id}`}>
                     <EditIcon />
                 </IconButton>
-                <IconButton aria-label="delete" /*onClick={() => deleteContact(ingredient.id)}*/>
+                <IconButton aria-label="delete" onClick={() => deleteContact(ingredient.id)} >
                     <DeleteIcon />
                 </IconButton>
                 </TableCell>
@@ -72,7 +73,6 @@ const IngredientList = ({ ingredients, name }) => {
             <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                 <TableRow>
-                    <TableCell>ID</TableCell>
                     <TableCell>Name</TableCell>
                     <TableCell align="right">Type</TableCell>
                     <TableCell align="right">Amount</TableCell>
@@ -85,6 +85,7 @@ const IngredientList = ({ ingredients, name }) => {
             </Table>
             </TableContainer>
             
+            {stateIngredient.message.content && <FlashMessage message={stateIngredient.message} />}
         </div>
       );
     

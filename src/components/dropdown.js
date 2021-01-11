@@ -29,7 +29,7 @@ export default function FadeMenu(props) {
   }
   
   useEffect(() => {
-    if(context.authObj.getCurrentToken()){
+    if(context.authObj.getCurrentToken() && context.authObj.getUser()){
       setAuth(true)
     }   
   },)

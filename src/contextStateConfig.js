@@ -20,7 +20,7 @@ const ContextState = () => {
     const [stateMessageReducer, dispatchMessageReducer] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState)
 
     const handleMessage = () => {
-      dispatchMessageReducer(ACTIONS.message())
+      dispatchMessageReducer(ACTIONS.messageError())
     }
 
 
@@ -28,8 +28,12 @@ const ContextState = () => {
 
     const [stateIngredientReducer, dispatchIngredientReducer] = useReducer(IngredientReducer.IngredientReducer, IngredientReducer.initialState)
 
-    const handleFetch = () => {
-      dispatchIngredientReducer(ACTIONS.fetch_ingredients())
+    const fetchIngredients = (ingredients) => {
+      dispatchIngredientReducer(ACTIONS.fetch_ingredients(ingredients))
+    }
+
+    const fetchIngredient = (ingredient) => {
+      dispatchIngredientReducer(ACTIONS.fetch_ingredient(ingredient))
     }
 
 
@@ -63,12 +67,17 @@ const ContextState = () => {
       
       <Context.Provider
           value={{
-            ingredientState: stateIngredientReducer.ingredients,
-            useContextFetch: () => handleFetch(),
+            ingredientsState: stateIngredientReducer.ingredients,
+            ingredientState: stateIngredientReducer.ingredient,
+            messageState: stateIngredientReducer.message,
+            typesState: stateIngredientReducer.types,
+            handleFetchIngredients: (ingredients) => fetchIngredients(ingredients),
+            handleFetchIngredient: (ingredient) => fetchIngredient(ingredient),
 
             authState: stateAuthReducer.is_authenticated,
             profileState:  stateAuthReducer.profile,
             userState: stateAuthReducer.user,
+            authMessageState: stateMessageReducer.message,
             handleUserLogin: () => handleLogin(),
             handleUserLogout: () => handleLogout(),
             handleUserRegister: () => handleRegister(),

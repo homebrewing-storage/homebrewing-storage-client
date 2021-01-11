@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useReducer } from "react";
-import { Input, Select, MenuItem, TextField } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import {useForm, Controller} from 'react-hook-form'
 import { FlashMessage, flashErrorMessage } from '../components/flashMessage';
 import Grid from '@material-ui/core/Grid';
@@ -12,13 +12,22 @@ import Link from '@material-ui/core/Link';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CssBaseline from '@material-ui/core/CssBaseline';
-
+import FacebookIcon from '@material-ui/icons/Facebook';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import * as MessageReducer from '../store/reducers/message_reducer';
+import * as AuthReducer from '../store/reducers/auth_reducer';
+import axios from 'axios';
+import * as ACTIONS from '../store/actions/actions';
+import history from '../utils/history';
 
 
 const useStyles = makeStyles((theme) => ({
     form: {
       width: '100%',
       marginTop: theme.spacing(1)
+    },
+    icon: {
+      marginLeft: theme.spacing(2)
     }
 }))
 
@@ -26,17 +35,46 @@ const LoginPage = () => {
   const { handleSubmit, register, errors, control} = useForm();
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
+  const [ message, setMessage ] = useState('');
   const [loading, setLoading] = useState(null);
   const context = useContext(Context);
   const classes = useStyles();
+  const [stateMessage, dispatchMessage] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState);
+  const [stateAuthReducer, dispatchAuthReducer] = useReducer(AuthReducer.AuthReducer, AuthReducer.initialState)
 
 
-  const onSubmit = async data => {
-    await context.authObj.login(data)
+  const onSubmit = async (data) => {
+    
+      axios.get('http://localhost/sanctum/csrf-cookie')
+      .then(res => {
+        axios.post('http://localhost/api/' + "login", data)
+        .then((response) => {
+          if (response.data.token) {
+            localStorage.setItem("token", JSON.stringify(response.data.token));
+            context.authObj.getUserBoard().then((res) => {
+              if(res.status < 400){
+                dispatchAuthReducer(ACTIONS.login_success())
+                setTimeout(() => { history.replace('/authcheck') }, 800)
+                setTimeout(() => { window.location.reload() }, 1200)
+              }
+            })
+          }
+          
+        }).catch(error => {
+          console.log(error.response)
+          dispatchMessage({
+            type: "ERROR",
+            payload: {
+              type: 'error',
+              content: error.response.data.email || error.response.data.password
+            }
+          })
+          setLoading(false);
+        })
+      })
+
     setLoading(true);
   };
-
-  
 
   return (
     <Container component="main" maxWidth="xs">
@@ -55,7 +93,7 @@ const LoginPage = () => {
         name="email" 
         inputRef={register({ required: true })} 
         label="email" 
-        onchange={e => setEmail(e.target.value)}
+        onChange={e => setEmail(e.target.value)}
         type="email"
         ></TextField>
       <TextField 
@@ -64,7 +102,7 @@ const LoginPage = () => {
         name="password" 
         inputRef={register({ required: true })} 
         label="password" 
-        onchange={e => setPassword(e.target.value)} 
+        onChange={e => setPassword(e.target.value)} 
         type="password"
         ></TextField>
       </Grid>
@@ -96,7 +134,24 @@ const LoginPage = () => {
       justify="center"
       alignItems="center"
     >
-    {loading ? <CircularProgress className={classes.form}/> : <div></div>}
+    <Grid
+      container
+      direction="column"
+      className={classes.form}
+    >
+      <a href="http://localhost/login/facebook">
+      <Button className={classes.form} variant="contained" color="primary" type="submit" fullWidth>
+        Log in with facebook <FacebookIcon className={classes.icon}/>
+      </Button>
+      </a>
+      <a href="http://localhost/login/github">
+      <Button className={classes.form} variant="contained" color="primary" type="submit" fullWidth>
+        Log in with github <GitHubIcon className={classes.icon}/>
+      </Button>
+      </a>
+      </Grid>
+      {loading ? <CircularProgress className={classes.form}/> : <div></div>}
+      {stateMessage.message.content && <FlashMessage message={stateMessage.message} />}
     </Grid>
     </Container>
   );

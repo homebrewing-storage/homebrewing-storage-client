@@ -2,6 +2,7 @@ import React from 'react'
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { spacing } from '@material-ui/system';
 import Box from '@material-ui/core/Box';
+import * as ACTIONS from '../store/actions/actions';
 
 export const FlashMessage = ({message}) => {
     return (
@@ -16,13 +17,9 @@ export const FlashMessage = ({message}) => {
 
 export const flashErrorMessage = (dispatch, error) => {
     const err = error.response ? error.response.data : error;
-    dispatch({
-        type: 'MESSAGE',
-        payload: {
-            type: 'error',
-            title: err.name,
-            content: err.message
-        }
-    })
+    dispatch(ACTIONS.messageError(err))
 }
 
+export const flashSuccessMessage = (dispatch, text) => {
+    dispatch(ACTIONS.messageSuccess(text))
+}

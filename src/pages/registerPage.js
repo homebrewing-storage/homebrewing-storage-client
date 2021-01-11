@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useReducer, useEffect } from 'react'
 import { TextField } from '@material-ui/core';
-import axios from 'axios';
 import { useForm } from "react-hook-form";
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -9,6 +8,11 @@ import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Context from '../utils/context';
 import { flashErrorMessage, FlashMessage } from '../components/flashMessage';
+import * as ACTIONS from '../store/actions/actions';
+import * as MessageReducer from '../store/reducers/message_reducer';
+import * as AuthReducer from '../store/reducers/auth_reducer';
+
+
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -19,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
 
   
 
-
 const RegisterPage = () => {
     const { handleSubmit, register, errors, control} = useForm();
     const [name, setName] = useState('');
@@ -29,18 +32,44 @@ const RegisterPage = () => {
     const [password_confirmation, setPasswordConfirmation] = useState('');
     const classes = useStyles();
     const context = useContext(Context);
-    const [state, setState] = useState();
+    const [state, setState] = useState({});
+    const [tokenState, setToken] = useState('');
+    const [stateMessage, dispatchMessage] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState);
+    const [stateAuthReducer, dispatchAuthReducer] = useReducer(AuthReducer.AuthReducer, AuthReducer.initialState)
 
 
-    const onSubmit = async data => {
-      await context.authObj.register(data)
+    useEffect(() => {
+      
+      console.log(state)
+
+    }, [])
+
+
+    const dispatchAction = () => {
+      const token = context.authObj.isAuthenticated();
+      if(token){
+        setToken(token)
+        dispatchAuthReducer(ACTIONS.register_success())
+        
+        setState(stateAuthReducer.message)
+        console.log()
+      } else {
+        console.log('error')
+      }
+      
+    }
+
+
+    const onSubmit = (data) => {
+      const res = () => context.authObj.register(data);
+      console.log(res())
     };
 
 
     return (
         <Container maxWidth="xs" component="main">
         <CssBaseline />
-        <form  className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>
+        <form  className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)} >
         <Grid
         container
         direction="column"
@@ -53,11 +82,11 @@ const RegisterPage = () => {
         <TextField name="password" className={classes.form} variant="outlined" inputRef={register({ required: true })} label="password" onchange={e => setPassword(e.target.value)} type="password"></TextField>
         <TextField name="password_confirmation" className={classes.form} variant="outlined" inputRef={register({ required: true })} label="password confirmation" onchange={e => setPasswordConfirmation(e.target.value)} type="password"></TextField> 
         </Grid>
-        <Button variant="contained" className={classes.form} fullWidth color="primary" type="submit">
+        <Button variant="contained" className={classes.form} fullWidth color="primary" type="submit" onClick={() => dispatchAction()}>
         Register
         </Button>
         </form>
-        {context.messageState && <FlashMessage message={context.messageState} />}
+        {state.content && <FlashMessage message={state} />}
         </Container>
     )
 }

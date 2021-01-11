@@ -1,20 +1,22 @@
 import * as ACTION_TYPES from './action_types'
 
-export const SUCCESS = {
-  type: ACTION_TYPES.SUCCESS
-}
-
-export const FAILURE = {
-  type: ACTION_TYPES.FAILURE
-}
-
-export const message = (err) => {
+export const messageError = (err) => {
   return {
-    type: ACTION_TYPES.MESSAGE,
+    type: ACTION_TYPES.ERROR,
     payload: {
       type: 'error',
       title: err.title,
       content: err.message
+    }
+  }
+}
+
+export const messageSuccess = (text) => {
+  return {
+    type: ACTION_TYPES.SUCCESS,
+    payload: {
+      type: 'success',
+      title: text,
     }
   }
 }
@@ -55,4 +57,39 @@ export const fetch_ingredients = (ingredients) => {
       type: ACTION_TYPES.FETCH_INGREDIENTS,
       payload: ingredients
   }  
+}
+
+export const fetch_ingredient = (ingredient) => {
+  return {
+      type: ACTION_TYPES.FETCH_INGREDIENT,
+      payload: ingredient
+  }  
+}
+
+export const delete_ingredient = (ingredients) => {
+  return {
+      type: ACTION_TYPES.DELETE_INGREDIENT,
+      payload: ingredients
+  }  
+}
+
+export const create_ingredient = (ingredients) => {
+  return {
+      type: ACTION_TYPES.CREATE_INGREDIENT,
+      payload: ingredients
+  }
+}
+
+export const update_ingredient = (ingredient) => {
+  return {
+    type: ACTION_TYPES.UPDATE_INGREDIENT,
+    payload: ingredient
+  }
+}
+
+export const ingredient_types = (types) => {
+  return {
+    type: ACTION_TYPES.INGREDIENT_TYPES,
+    payload: types
+  }
 }
