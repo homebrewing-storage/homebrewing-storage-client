@@ -16,6 +16,7 @@ import Profile from './components/profile';
 import AuthCheck from './utils/authcheck';
 import VerifyEmail from './pages/verifyEmail';
 import IngredientPage from './pages/ingredientPage';
+import IngredientForm from './components/ingredientForm';
 
 
 const PrivateRoute = ({component: Component, auth }) => (
@@ -60,7 +61,7 @@ const Routes = () => {
       } else {
         setAuthState(true);
       }
-    },)  
+    }, [context.authObj])  
 
       return(
           <div>
@@ -75,21 +76,18 @@ const Routes = () => {
                             auth={auth}
                             component={RegisterPage} />
                   <Route  path="/notifications" component={NotificationsPage}></Route>
+                  
                   <Route  path="/user" component={UserPage}></Route>
                   <Route  path="/logs" component={LogsPage}></Route>
                   <Route  path="/ingredients/:name/:id" component={IngredientPage}></Route>
                   <Route  path="/ingredients/yeasts" component={YeastsPage}></Route>
+                  <Route  path="/:name/add" component={IngredientForm}></Route>
                   <Route  path="/ingredients/hops" component={HopsPage}></Route>
                   <Route  path="/ingredients/fermentables" component={FermentablesPage}></Route>
                   <Route  path="/ingredients/extras" component={ExtrasPage}></Route>
                   <Route  path='/authcheck' component={AuthCheck} />
                   <Route  path='/email/verify/:id/:hash?:expires?:signature' component={VerifyEmail} />
                   <PrivateRoute path="/profile" auth={context.authObj.getCurrentToken() ? true : false} component={Profile} />
-                  <Route path='/login/facebook' component={() => { 
-                        window.location.href = 'http://localhost/login/facebook'; 
-                        return null;
-                    }}/>
-                  <Route path='http://localhost/login/facebook'></Route> 
                 </Switch>
                 </main>
             </div>

@@ -1,5 +1,5 @@
-import React, { useState, useContext, useReducer, useEffect } from 'react';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
+import React, {  useContext, useReducer } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
 import CardActions from '@material-ui/core/CardActions';
@@ -9,11 +9,9 @@ import { useForm, Controller} from 'react-hook-form';
 import TextField from '@material-ui/core/TextField';
 import Context from '../utils/context';
 import axios from 'axios';
-import * as ACTIONS from '../store/actions/actions';
 import * as IngredientReducer from '../store/reducers/ingredients_reducer';
-import * as MessageReducer from '../store/reducers/message_reducer';
-import { flashErrorMessage, FlashMessage } from './flashMessage';
-import { useLocation, useParams } from 'react-router';
+import { FlashMessage } from './flashMessage';
+import { useParams } from 'react-router';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -37,43 +35,79 @@ const useStyles = makeStyles((theme) => ({
     },
     formControl: {
       minWidth: 200,
+      width: '100%'
     },
+    input: {
+      width: '100%',
+    }
 }));
 
 const IngredientCard = ({ingredient}) => {
   const context = useContext(Context);
   const classes = useStyles();
   const { control, handleSubmit } = useForm();
-  const [ type, setType ] = useState('');
   const [stateIngredient, dispatchIngredient] = useReducer(IngredientReducer.IngredientReducer, IngredientReducer.initialState);
-  const [stateMessage, dispatchMessage] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState);
-  const location = useLocation();
-  const [types, setTypes] = useState([]);
   const id = useParams().id;
   const name = useParams().name;
 
 
-  useEffect(() => {
-    axios.get('http://localhost/api/yeast-type', { headers: context.authObj.authHeader() })
-      .then(res => {
-        setTypes(res.data)
-      })
-  }, [])
-
   const editIngredient = async data => {
-    console.log(data)
-      try {
-        const response = await axios.put(`http://localhost/api/${name}/${id}`, data, { headers: context.authObj.authHeader() });
-        dispatchIngredient(ACTIONS.update_ingredient(response.data))
-        console.log(response)
-        
-      } catch (error) {
-        flashErrorMessage(dispatchMessage, error);
-      }
-  }
+      await axios.put(`http://vps-71bedefd.vps.ovh.net/api/${name}/${id}`, data, { headers: context.authObj.authHeader() })
+      .then(response => {
+        context.handleUpdateIngredient(response.data)
 
+      }).catch(error => {
+        dispatchIngredient({
+          type: "MESSAGE",
+          payload: {
+            type: 'error',
+            content: error.response.data.name || error.response.data.amount || error.response.data.expiration_date || error.response.data.type_id
+          }
+        })
+      })
+        
+  }
+  
   const onSubmit = async data => {
     await editIngredient(data);
+  }
+
+  const Type = () => {
+    return (
+      <Grid item className={classes.form} xs={4}>
+        <FormControl className={classes.formControl}>
+                  <InputLabel htmlFor="type_id">Type</InputLabel>
+                  <Controller
+                    control={control}
+                    name="type_id"
+                    as={
+                      <Select id="type_id" >
+                        {context.typesState.map(item => {
+                            return(
+                              <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+                            )
+                          })}
+                      </Select>
+                    }
+                    defaultValue={ingredient.type.id}
+                    />
+                </FormControl>
+        </Grid>
+    )
+  }
+
+  const Acid = () => {
+    return (
+      <Grid item className={classes.form} xs={4}>
+              <Controller as={
+                <TextField 
+                id="alpha_acid"
+                label="Alpha acid"
+                className={classes.input}
+                />
+              } name="alpha_acid" control={control} defaultValue={ingredient.alpha_acid} />
+    </Grid>
+    )
   }
 
   return (
@@ -82,50 +116,33 @@ const IngredientCard = ({ingredient}) => {
     <form onSubmit={handleSubmit(onSubmit)} >
       <CardContent>
         
-        <Grid item className={classes.form}>
+        <Grid item className={classes.form} xs={4}>
           <Controller as={
             <TextField 
               id="Name"
               label="Name"
-
+              className={classes.input}
               />
           } name="name" control={control} defaultValue={ingredient.name} />
         </Grid>
-        <Grid item className={classes.form}>
-        <FormControl className={classes.formControl}>
-                  <InputLabel id="type_id">Type</InputLabel>
-                  <Controller
-                    control={control}
-                    name="type_id"
-                    as={
-                      <Select labelId="type_id">
-                        {types.map(item => {
-                            return(
-                              <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
-                            )
-                          })}
-                      </Select>
-                    }
-                    />
-                </FormControl>
-        </Grid>
-        <Grid item className={classes.form}>
+        {name==="hops" ? Acid() : Type()}
+        <Grid item className={classes.form} xs={4}>
           <Controller as={
             <TextField 
               id="Amount"
               label="Amount"
-              
+              className={classes.input}
               />
               } name="amount" control={control} defaultValue={ingredient.amount} />
         </Grid>
-        <Grid item className={classes.form}>
+        <Grid item className={classes.form} xs={4}>
           <Controller as={
             <TextField 
               id="Date"
               type="date"
-
+              className={classes.input}
               />
-              } name="expiration_date" control={control} defaultValue='' />
+              } name="expiration_date" control={control} defaultValue={ingredient.expiration_date} />
         </Grid>
         
       </CardContent>
@@ -143,6 +160,7 @@ const IngredientCard = ({ingredient}) => {
       </Grid>
       </form>
     </Card>
+    {stateIngredient.message.content && <FlashMessage message={stateIngredient.message} />}
     </Grid>
   );
 }

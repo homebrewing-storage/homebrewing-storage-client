@@ -4,13 +4,7 @@ import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import ListIcon from '@material-ui/icons/List';
 import AddIcon from '@material-ui/icons/Add';
-import { NavLink, Route, Switch } from 'react-router-dom';
-import IngredientListPage from './pages/ingredientListPage';
-import IngredientFormPage from './pages/ingredientFormPage';
-import YeastsPage from './pages/yeastsPage';
-import HopsPage from './pages/hopsPage';
-import FermentablesPage from './pages/fermentablesPage';
-import ExtrasPage from './pages/extrasPage';
+import { NavLink } from 'react-router-dom';
 
 const useStyles = makeStyles({
   root: {
@@ -21,14 +15,11 @@ const useStyles = makeStyles({
 export default function SimpleBottomNavigation({match}) {
     const pathname = window.location.pathname;
     const classes = useStyles();
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = React.useState(pathname);
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
-    const bottomName = match;
 
-    
-    console.log(bottomName);
     
   return (
     <div>
@@ -39,26 +30,11 @@ export default function SimpleBottomNavigation({match}) {
         className={classes.root}
         >
         
-        <BottomNavigationAction label="Ingredients List" icon={<ListIcon />} component={NavLink} to={bottomName.path} />
-        <BottomNavigationAction label="Add Ingredient" icon={<AddIcon />} component={NavLink} to={`${bottomName.path}/new`} />
+          <BottomNavigationAction label="All" icon={<ListIcon />} value="/notifications/all" component={NavLink} to='/notifications/all' />
+          <BottomNavigationAction label="Unread" icon={<AddIcon />} value="/notifications/unread" component={NavLink} to='/notifications/unread' />
 
         </BottomNavigation>
-    <Switch>
-      <Route exact path={`${bottomName.path}/new`}
-      render={({match}) => {
-        return (
-          <div>
-            <IngredientFormPage />
-          </div>
-          ) 
-      }}
-      >
-      </Route>
-      <Route exact path='/ingredients/yeasts' component={YeastsPage} />
-      <Route exact path='/ingredients/hops' component={HopsPage} />
-      <Route exact path='/ingredients/fermentables' component={FermentablesPage} />
-      <Route exact path='/ingredients/extras' component={ExtrasPage} />
-    </Switch>
+
     </div>
   );
 }

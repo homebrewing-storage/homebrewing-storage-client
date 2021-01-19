@@ -2,8 +2,7 @@
 import history from './history';
 import axios from "axios";
 
-const API_URL = "http://localhost/api/";
-
+const API_URL = "http://vps-71bedefd.vps.ovh.net/api/";
 
 
 export default class Auth {
@@ -13,7 +12,7 @@ export default class Auth {
   
   login = (data) => {
     
-      return axios.get('http://localhost/sanctum/csrf-cookie').then(axios.post(API_URL + "login", { email: data.email, password: data.password})
+      return axios.get('http://vps-71bedefd.vps.ovh.net/sanctum/csrf-cookie').then(axios.post(API_URL + "login", { email: data.email, password: data.password})
         .then((response) => {
           if (response.data.token) {
             localStorage.setItem("token", JSON.stringify(response.data.token));
@@ -38,16 +37,14 @@ export default class Auth {
 
   register = (data) => {
 
-
-      axios.defaults.withCredentials = true;
-      axios.get('http://localhost/sanctum/csrf-cookie')
+      axios.get('http://vps-71bedefd.vps.ovh.net/sanctum/csrf-cookie')
       .then(res => {
         axios.post(API_URL + "register", data)
         .then((res) => {
           localStorage.setItem("token", JSON.stringify(res.data.token));
           return true;
-        })
-      }).catch(err => { return false })
+        }).catch(err => console.log(err.response))
+      }).catch(err => console.log(err.response))
      
   }
 
@@ -73,9 +70,10 @@ export default class Auth {
   getUserBoard() {
     return axios.get(API_URL + "user", { headers: this.authHeader() })
     .then(response => {
+      console.log(response)
       localStorage.setItem("user", JSON.stringify(response.data))
       return response
-    }).catch(err => {return err.response})
+    }).catch(err => console.log(err.response))
   
   }
 

@@ -1,20 +1,17 @@
-import React, { useContext, useState, useReducer, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { useForm, Controller} from 'react-hook-form';
-import { flashErrorMessage, FlashMessage } from './flashMessage';
 import axios from 'axios';
 import Box from '@material-ui/core/Box';
-import * as ACTIONS from '../store/actions/actions';
-import * as IngredientReducer from '../store/reducers/ingredients_reducer';
-import * as MessageReducer from '../store/reducers/message_reducer';
 import Context from '../utils/context';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
+import { useParams } from 'react-router-dom';
 
 const useStyles = makeStyles({
   formControl: {
@@ -23,34 +20,34 @@ const useStyles = makeStyles({
 });
 
 
-const IngredientForm = ({name}) => {
+
+const IngredientForm = ({createName}) => {
     const classes = useStyles();
     const context = useContext(Context);
     const { control, handleSubmit, register } = useForm();
-    const [stateIngredient, dispatchIngredient] = useReducer(IngredientReducer.IngredientReducer, IngredientReducer.initialState);
-    const [stateMessage, dispatchMessage] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState);
-    const [types, setTypes] = useState([]);
-    const [type, setType] = useState('');
-    const [inputName, setInputName] = useState('');
+    const nameIngredient = useParams().name;
+    const [loading, setLoading] = useState(true);
+
     
 
     useEffect(() => {
-      axios.get('http://localhost/api/yeast-type', { headers: context.authObj.authHeader() })
+      nameIngredient === "hop" ? setLoading(false) :
+      axios.get(`http://vps-71bedefd.vps.ovh.net/api/${nameIngredient}-type`, { headers: context.authObj.authHeader() })
       .then(res => {
-        dispatchIngredient(ACTIONS.ingredient_types(res.data))
-        setTypes(res.data)
+        context.handleFetchTypes(res.data)
+        setLoading(false);
       })
       
-    }, [])
+    }, [setLoading])
 
     const createIngredient = async data => {
-      console.log(data)
+      axios.defaults.withCredentials = true
       try {
-        const response = await axios.post(`http://localhost/api/${name}`, data, { headers: context.authObj.authHeader() });
-        dispatchIngredient(ACTIONS.create_ingredient(response.data))
+        const response = await axios.post(`http://vps-71bedefd.vps.ovh.net/api/${nameIngredient}s`, data, { headers: context.authObj.authHeader() });
+        context.handleCreateIngredient(response.data)
 
       } catch (error) {
-        flashErrorMessage(dispatchMessage, error);
+        return error
       }
     };
 
@@ -59,7 +56,46 @@ const IngredientForm = ({name}) => {
       await createIngredient(data);
     };
 
+    if (loading) {
+      return <p>Please wait...</p>
+    }
 
+    const Type = () => {
+      return (  
+        <Grid item xs={12} lg={3}>
+                <FormControl className={classes.formControl}>
+                  <InputLabel htmlFor="type_id">Type</InputLabel>
+                  <Controller
+                    control={control}
+                    name="type_id"
+                    defaultValue=''
+                    as={
+                      <Select id="type_id">
+                        {context.typesState.map(item => {
+                              return(
+                              <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+                              )
+                          })}
+                      </Select>
+                    }
+                    />
+                </FormControl>
+              </Grid>
+      )
+    }
+
+    const Acid = () => {
+      return (
+        <Grid item xs={12} lg={3}>
+                <Controller as={
+                  <TextField 
+                  id="alpha_acid"
+                  label="Alpha acid"
+                  />
+                } name="alpha_acid" control={control} defaultValue="" />
+      </Grid>
+      )
+    }
 
     return (
         
@@ -68,35 +104,17 @@ const IngredientForm = ({name}) => {
               <Box mt={3}>
               <Grid container spacing={2} alignItems="flex-end">
 
-                <Grid item xs={2}>
+                <Grid item xs={12} lg={3}>
                 <TextField 
                   id="Name"
                   label="Name"
                   name="name"
-                  inputRef={register({ required: true })} 
+                  inputRef={register({ required: true })}
                   />
                 </Grid>
+                {nameIngredient==="hop" ? Acid() : Type()}
 
-                <Grid item xs={2}>
-                <FormControl className={classes.formControl}>
-                  <InputLabel id="type_id">Type</InputLabel>
-                  <Controller
-                    control={control}
-                    name="type_id"
-                    as={
-                      <Select labelId="type_id">
-                        {types.map(item => {
-                            return(
-                              <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
-                            )
-                          })}
-                      </Select>
-                    }
-                    />
-                </FormControl>
-                </Grid>
-
-                <Grid item xs={2}>
+                <Grid item xs={12} lg={3}>
                 <Controller as={
                   <TextField 
                   id="Amount"
@@ -105,7 +123,7 @@ const IngredientForm = ({name}) => {
                 } name="amount" control={control} defaultValue="" />
                 </Grid>
                 
-                <Grid item xs={3}> 
+                <Grid item xs={12} lg={3}> 
                 <Controller as={
                   <TextField 
                   id="exp_date"
@@ -114,15 +132,15 @@ const IngredientForm = ({name}) => {
                 } name="expiration_date" control={control} defaultValue="" />
                 </Grid>
 
-                <Grid item xs={2}>
-                  <Button variant="outlined" primary type="submit">
+                <Grid item xs={12} lg={2}>
+                  <Button variant="outlined" type="submit">
                     ADD
                   </Button>
                 </Grid>
                 
                 </Grid>
                 </Box>
-                {stateIngredient.message.content && <FlashMessage message={stateIngredient.message} />}
+                
               </form> 
                                                      
     )

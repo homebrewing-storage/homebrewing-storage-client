@@ -12,7 +12,6 @@ export default function FadeMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const context = useContext(Context);
-  const [userState, setUserState] = useState(null);
   const [auth, setAuth] = useState(null);
 
   const handleClick = (event) => {
@@ -32,7 +31,7 @@ export default function FadeMenu(props) {
     if(context.authObj.getCurrentToken() && context.authObj.getUser()){
       setAuth(true)
     }   
-  },)
+  }, [context.authObj])
 
   let authorized;
   if(!auth){

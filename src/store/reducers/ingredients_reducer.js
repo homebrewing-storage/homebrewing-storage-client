@@ -9,6 +9,11 @@ export const initialState = {
 
 export const IngredientReducer = (state = initialState, action) => {
     switch(action.type) {
+      case ACTION_TYPES.MESSAGE:
+        return {
+          ...state,
+          message: action.payload
+        }
       case ACTION_TYPES.FETCH_INGREDIENTS:
         return {
           ...state,
@@ -30,7 +35,7 @@ export const IngredientReducer = (state = initialState, action) => {
           },
       }
       case ACTION_TYPES.DELETE_INGREDIENT:
-        const {id, name} = action.payload;
+        const id = action.payload;
         return {
           ...state,
           ingredients: state.ingredients.filter(item => item.id !== id),

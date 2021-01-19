@@ -1,21 +1,17 @@
-import React, { useEffect, useContext } from 'react'
-import axios from 'axios';
-import Context from '../utils/context';
-import NotificationCard from '../components/notificationCard';
+import React from 'react'
+import BottomNavigation from '../BottomNavigation';
+import NotificationsAll from '../components/notificationsAll';
+import NotificationsUnread from '../components/notiticationsUnread';
+import { Route } from 'react-router-dom';
 
 const NotificationsPage = () => {
-    const context = useContext(Context)
-
-    useEffect(() => {
-        axios.get('http://localhost/api/notifications', { headers: context.authObj.authHeader() })
-        .then(res => console.log(res))
-        
-    }, [])
 
     return (
         <div>
             <h1>Notifications Page</h1>
-            <NotificationCard />
+            <BottomNavigation />
+            <Route  path="/notifications/all" component={NotificationsAll}></Route>
+            <Route  path="/notifications/unread" component={NotificationsUnread}></Route>
         </div>
     )
 }

@@ -1,14 +1,12 @@
-import React, { useContext, useEffect, useReducer, useState} from 'react';
+import React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import Dropdown from './components/dropdown';
 import Menu from './components/menu';
-import Context from './utils/context';
 import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
@@ -65,19 +63,12 @@ const PermanentDrawerLeft = (props) => {
   const { window } = props;
   const classes = useStyles();
   const theme = useTheme();
-  const context = useContext(Context);
-  const [auth, setAuthState] = useState(null);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
-  useEffect(() => {
-    if(context.authObj.getCurrentToken() && context.authObj.getUserBoard()) {
-      setAuthState(true);
-    } 
-  }, [])
 
   const container = window !== undefined ? () => window().document.body : undefined;
 

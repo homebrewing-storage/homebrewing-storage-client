@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     minWidth: 275,
+    margin: theme.spacing(3),
+    '&:hover': {
+      background: 'rgba(0,0,0,.05)',
+      cursor: 'pointer'
+    }
   },
   bullet: {
     display: 'inline-block',
@@ -21,34 +24,48 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
-});
+}));
 
- const NotificationCard = () => {
+ const NotificationCard = ({notification}) => {
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
+  const [list, setList] = useState([])
 
-  return (
-    <Card className={classes.root}>
+  useEffect(() => {
+    setList(notification)
+  }, [])
+
+  const deleteHandler = (id) => {
+    setList(list.filter(item => item.id !== id))
+  }
+  
+
+  const notifications = () => {
+    
+    return notification.map(item => {
+      return (
+      <Card className={classes.root} key={item.uuid} onClick={(e) => deleteHandler(item.uuid)}>
       <CardContent>
         <Typography className={classes.title} color="textSecondary" gutterBottom>
-          Word of the Day
+          {item.data.Message}
         </Typography>
         <Typography variant="h5" component="h2">
-          be{bull}nev{bull}o{bull}lent
+          {item.data.Date}
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          adjective
+          {item.data.Ingredient}
         </Typography>
-        <Typography variant="body2" component="p">
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
-        </Typography>
+        
       </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
     </Card>
+      )
+    })
+  } 
+
+
+  return (
+    <div>
+      {notifications()}
+    </div>
   );
 }
 

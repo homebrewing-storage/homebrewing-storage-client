@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useState } from 'react'
+import React, { useContext, useReducer } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,11 +10,9 @@ import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { NavLink, Route } from 'react-router-dom';
-import { flashErrorMessage, flashSuccessMessage, FlashMessage }  from  './flashMessage';
+import { NavLink } from 'react-router-dom';
+import { flashErrorMessage, FlashMessage }  from  './flashMessage';
 import axios  from  'axios';
-import * as ACTIONS from '../store/actions/actions';
-import * as IngredientReducer from '../store/reducers/ingredients_reducer';
 import * as MessageReducer from '../store/reducers/message_reducer';
 import Context from '../utils/context';
 
@@ -27,28 +25,27 @@ const useStyles = makeStyles({
 const IngredientList = ({ ingredients, name }) => {
     const classes = useStyles();
     const context = useContext(Context);
-    const [stateIngredient, dispatchIngredient] = useReducer(IngredientReducer.IngredientReducer, IngredientReducer.initialState);
     const [stateMessage, dispatchMessage] = useReducer(MessageReducer.MessageReducer, MessageReducer.initialState);
 
 
     const deleteContact = async id => {
+      axios.defaults.withCredentials = true
         try {
-          const response = await axios.delete(`http://localhost/api/${name}/${id}`, { headers: context.authObj.authHeader() });
-          console.log(response)
-          dispatchIngredient(ACTIONS.delete_ingredient(response.data.data || response.data));
-          
+          const response = await axios.delete(`http://vps-71bedefd.vps.ovh.net/api/${name}/${id}`, { headers: context.authObj.authHeader() });
+          context.handleDeleteIngredient(id)
         } catch (error) {
           flashErrorMessage(dispatchMessage, error)
         }
       };
-    
+
+
     const list = () => {
         
         return ingredients.map(ingredient => {
             return (
               <TableRow key={ingredient.id}>
                 <TableCell component="th" scope="row">{ingredient.name}</TableCell>
-                <TableCell align="right">{ingredient.type}</TableCell>
+                <TableCell align="right">{name==="hops" ? ingredient.alpha_acid : ingredient.type.name}</TableCell>
                 <TableCell align="right">{ingredient.amount}</TableCell>
                 <TableCell align="right">{ingredient.expiration_date}</TableCell>
                 <TableCell align="right"></TableCell>
@@ -74,7 +71,7 @@ const IngredientList = ({ ingredients, name }) => {
                 <TableHead>
                 <TableRow>
                     <TableCell>Name</TableCell>
-                    <TableCell align="right">Type</TableCell>
+                    <TableCell align="right">{name==="hops" ? "Acid alpha" : "Type"}</TableCell>
                     <TableCell align="right">Amount</TableCell>
                     <TableCell align="right">Exp date</TableCell>
                     <TableCell align="right"></TableCell>
@@ -85,7 +82,7 @@ const IngredientList = ({ ingredients, name }) => {
             </Table>
             </TableContainer>
             
-            {stateIngredient.message.content && <FlashMessage message={stateIngredient.message} />}
+            {stateMessage.message.content && <FlashMessage message={stateMessage.message} />}
         </div>
       );
     

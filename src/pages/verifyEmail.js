@@ -10,10 +10,8 @@ const VerifyEmail = () => {
     const [state, setState] = useState('');
 
     useEffect(() => {
-        console.log(location)
-        axios.get(`http://localhost${location.pathname}${location.search}`, { headers: context.authObj.authHeader()} )
+        axios.get(`http://vps-71bedefd.vps.ovh.net${location.pathname}${location.search}`, { headers: context.authObj.authHeader()} )
         .then(res => {
-            console.log(res)
             setState(res.data.message)
         }
        )

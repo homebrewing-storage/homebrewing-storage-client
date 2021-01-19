@@ -1,6 +1,5 @@
 import React from 'react'
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { spacing } from '@material-ui/system';
 import Box from '@material-ui/core/Box';
 import * as ACTIONS from '../store/actions/actions';
 

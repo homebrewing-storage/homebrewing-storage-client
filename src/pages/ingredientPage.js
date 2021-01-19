@@ -15,16 +15,13 @@ const IngredientPage = () => {
     
     useEffect(() => {
         
-        
         if (id) {
             const fetchData = async () => {
                 try{
-                    await axios.get(`http://localhost/api/${name}/${id}`, { headers: context.authObj.authHeader() })
+                    await axios.get(`http://vps-71bedefd.vps.ovh.net/api/${name}/${id}`, { headers: context.authObj.authHeader() })
                     .then(res => {
                         context.handleFetchIngredient(res.data || res.data.data)
-                        
                         setLoading(false);
-                        console.log(res)
                     }) 
 
                 } catch(error) {
@@ -32,13 +29,17 @@ const IngredientPage = () => {
                 }
             }
             fetchData();
+            axios.get('http://vps-71bedefd.vps.ovh.net/api/yeast-type', { headers: context.authObj.authHeader() })
+            .then(res => {
+                context.handleFetchTypes(res.data)
+
+            })
             
         } else {
             setLoading(false)
         }
         
     }, []);
-    console.log(context.ingredientState)
     
 
     if (loading) {

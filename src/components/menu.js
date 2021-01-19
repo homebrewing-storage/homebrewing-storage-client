@@ -3,7 +3,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import PersonIcon from '@material-ui/icons/Person';
 import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { NavLink } from 'react-router-dom';
@@ -24,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 const Menu = () => {
     const context = useContext(Context);
     const [auth, setAuth] = useState(null);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const classes = useStyles();
 
     const handleClick = () => {
@@ -35,15 +34,15 @@ const Menu = () => {
       if(context.authObj.getCurrentToken() && context.authObj.getUser()) {
         setAuth(true);
       } 
-    })
+    }, [context.authObj])
+
 
     let menu;
     if(!auth){
         menu = <div></div>
     } else {
         menu = 
-        <List>
-          
+        <List>  
           <ListItem button key="Ingredients" onClick={handleClick}>
             <ListItemIcon><LocalPharmacyIcon /></ListItemIcon>
             <ListItemText primary="Ingredients" />
@@ -52,11 +51,11 @@ const Menu = () => {
           <Collapse in={open} timeout="auto" unmountOnExit>
           {['Yeasts','Hops','Fermentables','Extras'].map((item, index) => {
             return (
-              <List>
-              <ListItem button className={classes.nested} component={NavLink} key={item} to={`/ingredients/${item.toLowerCase()}`}>
+              
+              <ListItem button className={classes.nested} component={NavLink} key={index} to={`/ingredients/${item.toLowerCase()}`}>
                 <ListItemText primary={item} />
               </ListItem>
-              </List>
+              
             )
           }
           )}
@@ -65,11 +64,6 @@ const Menu = () => {
           <ListItem button key="Notifcations" component={NavLink} to="/notifications">
             <ListItemIcon><NotificationsIcon /></ListItemIcon>
             <ListItemText primary="Notifcations" />
-          </ListItem>
-
-          <ListItem button key="User" component={NavLink} to="/user">
-            <ListItemIcon><PersonIcon /></ListItemIcon>
-            <ListItemText primary="User" />
           </ListItem>
 
           <ListItem button key="Logs" component={NavLink} to="/logs">
@@ -82,7 +76,9 @@ const Menu = () => {
 
     return (
         <div>
+          <List>
             {menu}
+          </List>
         </div>
     )
 }

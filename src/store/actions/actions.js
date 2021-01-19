@@ -66,10 +66,10 @@ export const fetch_ingredient = (ingredient) => {
   }  
 }
 
-export const delete_ingredient = (ingredients) => {
+export const delete_ingredient = (ingredient) => {
   return {
       type: ACTION_TYPES.DELETE_INGREDIENT,
-      payload: ingredients
+      payload: ingredient
   }  
 }
 
@@ -91,5 +91,19 @@ export const ingredient_types = (types) => {
   return {
     type: ACTION_TYPES.INGREDIENT_TYPES,
     payload: types
+  }
+}
+
+export const fetch_notifications = (notifications) => {
+  return {
+    type: ACTION_TYPES.FETCH_NOTIFICATIONS,
+    payload: notifications
+  }
+}
+
+export const fetch_logs = (logs) => {
+  return {
+    type: ACTION_TYPES.FETCH_LOGS,
+    payload: logs
   }
 }
